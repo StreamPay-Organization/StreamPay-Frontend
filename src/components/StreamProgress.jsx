@@ -18,9 +18,18 @@ export default function StreamProgress({
   const fraction = elapsedFraction(stream.start, stream.end, now);
   const streamed = stream.total * fraction;
 
+  const percent = Math.round(fraction * 100);
+
   return (
     <div className="stream-progress">
-      <div className="stream-progress__bar">
+      <div
+        className="stream-progress__bar"
+        role="progressbar"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={percent}
+        aria-label={`${stream.label || 'Stream'} progress`}
+      >
         <div
           className="stream-progress__fill"
           style={{
