@@ -50,6 +50,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
   padding: 0.9rem 1rem;
   background: var(--color-surface-2);
   border: 1px solid var(--color-border);
@@ -64,5 +66,9 @@
 @media (max-width: 520px) {
   .create-stream__row {
     grid-template-columns: 1fr;
+  }
+
+  .create-stream__form {
+    padding: 1.1rem;
   }
 }
