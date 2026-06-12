@@ -3,12 +3,26 @@ import { useStreams } from '../hooks/useStreams.js';
 import { useWallet } from '../hooks/useWallet.js';
 import StreamCard from '../components/StreamCard.jsx';
 import DashboardSummary from '../components/DashboardSummary.jsx';
-import Loader from '../components/Loader.jsx';
+import Skeleton from '../components/Skeleton.jsx';
 import ErrorMessage from '../components/ErrorMessage.jsx';
 import EmptyState from '../components/EmptyState.jsx';
 import Button from '../components/Button.jsx';
 import WalletButton from '../components/WalletButton.jsx';
 import './Dashboard.css';
+
+/**
+ * Placeholder card shown in place of a StreamCard while streams load.
+ */
+function StreamCardSkeleton() {
+  return (
+    <div className="stream-card">
+      <Skeleton width="40%" height="1.1rem" />
+      <Skeleton width="70%" height="1.2rem" className="dashboard__skeleton-row" />
+      <Skeleton width="50%" className="dashboard__skeleton-row" />
+      <Skeleton height="8px" className="dashboard__skeleton-row" />
+    </div>
+  );
+}
 
 /**
  * Render a titled section of streams with loading/error/empty handling.
@@ -19,7 +33,13 @@ function StreamSection({ title, direction }) {
   return (
     <section className="dashboard__section">
       <h2 className="dashboard__section-title">{title}</h2>
-      {loading && <Loader label="Loading streams…" />}
+      {loading && (
+        <div className="dashboard__grid">
+          <StreamCardSkeleton />
+          <StreamCardSkeleton />
+          <StreamCardSkeleton />
+        </div>
+      )}
       {error && <ErrorMessage message={error} onRetry={refetch} />}
       {!loading && !error && streams.length === 0 && (
         <EmptyState
