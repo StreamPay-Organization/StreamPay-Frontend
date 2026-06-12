@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { DEFAULT_TOKEN } from '../constants/tokens.js';
 import { validateStreamForm } from '../utils/validate.js';
 import { formatToken } from '../utils/format.js';
+import { ratePerDay } from '../utils/stream.js';
 import { DAY } from '../utils/time.js';
 import { createStream } from '../services/streams.js';
 import { useWallet } from '../hooks/useWallet.js';
@@ -56,12 +57,10 @@ export default function CreateStream() {
   const isValid = Object.keys(errors).length === 0;
 
   // Streaming rate preview (per day).
-  const ratePerDay = useMemo(() => {
-    const total = Number(form.total);
-    if (!total || end <= start) return 0;
-    const days = (end - start) / DAY;
-    return total / days;
-  }, [form.total, start, end]);
+  const rate = useMemo(
+    () => ratePerDay(Number(form.total), start, end),
+    [form.total, start, end]
+  );
 
   function update(field, value) {
     setForm((f) => ({ ...f, [field]: value }));
@@ -187,9 +186,7 @@ export default function CreateStream() {
         <div className="create-stream__preview">
           <span className="create-stream__preview-label">Streaming rate</span>
           <strong>
-            {ratePerDay > 0
-              ? `${formatToken(ratePerDay, form.token, 4)} / day`
-              : '—'}
+            {rate > 0 ? `${formatToken(rate, form.token, 4)} / day` : '—'}
           </strong>
         </div>
 
