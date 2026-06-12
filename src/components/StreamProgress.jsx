@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
 import { elapsedFraction } from '../utils/time.js';
 import { formatPercent, formatToken } from '../utils/format.js';
+import { useNow } from '../hooks/useNow.js';
 import './StreamProgress.css';
 
 /**
@@ -13,14 +13,7 @@ export default function StreamProgress({
   interval = 1000,
   showCounter = true,
 }) {
-  const [now, setNow] = useState(Date.now());
-
-  useEffect(() => {
-    if (stream.status !== 'active') return undefined;
-    const id = setInterval(() => setNow(Date.now()), interval);
-    return () => clearInterval(id);
-  }, [stream.status, interval]);
-
+  const now = useNow(interval, stream.status === 'active');
   const fraction = elapsedFraction(stream.start, stream.end, now);
   const streamed = stream.total * fraction;
 
