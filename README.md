@@ -43,3 +43,27 @@ Copy `.env.example` to `.env` if you want to tweak the demo settings.
 | `npm run dev`     | Start the Vite dev server.   |
 | `npm run build`   | Build for production.        |
 | `npm run preview` | Preview the production build.|
+
+## Project structure
+
+```
+src/
+  components/   reusable UI (Navbar, StreamCard, StreamProgress, …)
+  pages/        routed pages (Home, Dashboard, CreateStream, …)
+  services/     mock api, wallet and streams
+  context/      AppContext (wallet state)
+  hooks/        useWallet, useStreams
+  utils/        format, validate, time helpers
+  constants/    token list
+```
+
+## How streaming works
+
+A stream has a `total`, a `start` and an `end`. At any moment the amount
+streamed is `total * elapsedFraction(start, end, now)`. Recipients can
+withdraw the streamed-but-unclaimed portion; senders can cancel and reclaim
+whatever has not streamed yet.
+
+## License
+
+MIT — demo project.
