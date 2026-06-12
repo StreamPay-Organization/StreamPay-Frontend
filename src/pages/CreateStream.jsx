@@ -7,6 +7,7 @@ import { ratePerDay } from '../utils/stream.js';
 import { DAY } from '../utils/time.js';
 import { createStream } from '../services/streams.js';
 import { useWallet } from '../hooks/useWallet.js';
+import { useLocalStorage } from '../hooks/useLocalStorage.js';
 import TokenSelect from '../components/TokenSelect.jsx';
 import Button from '../components/Button.jsx';
 import ErrorMessage from '../components/ErrorMessage.jsx';
@@ -29,9 +30,13 @@ export default function CreateStream() {
   const navigate = useNavigate();
   const { isConnected } = useWallet();
 
+  // Remember the last token the user streamed across visits.
+  const [token, setToken] = useLocalStorage(
+    'streampay.lastToken',
+    DEFAULT_TOKEN
+  );
   const [form, setForm] = useState({
     recipient: '',
-    token: DEFAULT_TOKEN,
     total: '',
     label: '',
     startStr: toLocalInput(now),
@@ -75,7 +80,7 @@ export default function CreateStream() {
     try {
       const created = await createStream({
         recipient: form.recipient,
-        token: form.token,
+        token,
         total: form.total,
         label: form.label,
         start,
@@ -127,8 +132,8 @@ export default function CreateStream() {
         <label className="field">
           <span className="field__label">Token</span>
           <TokenSelect
-            value={form.token}
-            onChange={(v) => update('token', v)}
+            value={token}
+            onChange={setToken}
           />
         </label>
 
@@ -186,7 +191,7 @@ export default function CreateStream() {
         <div className="create-stream__preview">
           <span className="create-stream__preview-label">Streaming rate</span>
           <strong>
-            {rate > 0 ? `${formatToken(rate, form.token, 4)} / day` : '—'}
+            {rate > 0 ? `${formatToken(rate, token, 4)} / day` : '—'}
           </strong>
         </div>
 
