@@ -19,3 +19,13 @@ export function statusTone(status) {
   if (status === 'completed') return 'info';
   return 'neutral';
 }
+
+/**
+ * Capitalize a stream status for display, e.g. "active" → "Active".
+ * @param {string} status
+ * @returns {string}
+ */
+export function statusLabel(status) {
+  if (!status) return 'Unknown';
+  return status.charAt(0).toUpperCase() + status.slice(1);
+}
