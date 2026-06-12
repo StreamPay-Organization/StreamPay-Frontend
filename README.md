@@ -16,3 +16,11 @@ grants and subscriptions.
 - **Stream Detail** — progress, withdraw (claim streamed-so-far) and cancel
   (sender reclaims the remainder).
 - **Mock wallet** — connect / disconnect with persisted session.
+
+## Tech stack
+
+- React 18
+- Vite 5
+- react-router-dom 6
+- Plain CSS (per-component stylesheets + global CSS variables)
+- Mock Stellar wallet / SDK (no network)
