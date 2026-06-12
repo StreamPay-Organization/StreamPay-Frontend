@@ -56,3 +56,19 @@ h3 {
   display: flex;
   flex-direction: column;
 }
+
+/* Visible focus ring for keyboard users. */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+button {
+  font-family: inherit;
+}
+
+@media (max-width: 640px) {
+  .app-main {
+    padding: 1.25rem 1rem;
+  }
+}
