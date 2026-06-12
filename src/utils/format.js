@@ -89,3 +89,37 @@ export function formatDate(ts) {
 export function formatPercent(fraction) {
   return `${Math.round(fraction * 100)}%`;
 }
+
+/**
+ * Abbreviate large numbers with a K/M/B suffix, e.g. 12500 → "12.5K".
+ * Numbers below 1000 are returned with up to one decimal place.
+ * @param {number} value
+ * @returns {string}
+ */
+export function abbreviateNumber(value) {
+  if (value == null || Number.isNaN(value)) return '0';
+  const abs = Math.abs(value);
+  const units = [
+    { limit: 1e9, suffix: 'B' },
+    { limit: 1e6, suffix: 'M' },
+    { limit: 1e3, suffix: 'K' },
+  ];
+  for (const { limit, suffix } of units) {
+    if (abs >= limit) {
+      const scaled = value / limit;
+      return `${Number(scaled.toFixed(1))}${suffix}`;
+    }
+  }
+  return `${Number(value.toFixed(1))}`;
+}
+
+/**
+ * Format a streaming rate as an amount-per-unit label, e.g. "12.5 USDC/day".
+ * @param {number} amount - amount per period
+ * @param {string} token - token code
+ * @param {string} [unit] - the period label (day, hr, …)
+ * @returns {string}
+ */
+export function formatRate(amount, token, unit = 'day') {
+  return `${formatToken(amount, token)}/${unit}`;
+}
