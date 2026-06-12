@@ -44,6 +44,18 @@ Copy `.env.example` to `.env` if you want to tweak the demo settings.
 | `npm run build`   | Build for production.        |
 | `npm run preview` | Preview the production build.|
 
+## Environment variables
+
+All variables are optional and prefixed with `VITE_` so Vite exposes them to
+the client. See `.env.example` for the full list and defaults.
+
+| Variable                | Purpose                                          |
+| ----------------------- | ------------------------------------------------ |
+| `VITE_APP_NAME`         | Display name for the app.                        |
+| `VITE_STELLAR_NETWORK`  | Network the mock wallet reports (`TESTNET`/`PUBLIC`). |
+| `VITE_MOCK_LATENCY_MS`  | Simulated latency for the mock services.         |
+| `VITE_SOROBAN_RPC_URL`  | Soroban RPC endpoint (unused by the mock build). |
+
 ## Project structure
 
 ```
@@ -52,8 +64,8 @@ src/
   pages/        routed pages (Home, Dashboard, CreateStream, …)
   services/     mock api, wallet and streams
   context/      AppContext (wallet state)
-  hooks/        useWallet, useStreams
-  utils/        format, validate, time helpers
+  hooks/        useWallet, useStreams, useNow, useLocalStorage
+  utils/        format, validate, time, stream helpers
   constants/    token list
 ```
 
@@ -63,6 +75,14 @@ A stream has a `total`, a `start` and an `end`. At any moment the amount
 streamed is `total * elapsedFraction(start, end, now)`. Recipients can
 withdraw the streamed-but-unclaimed portion; senders can cancel and reclaim
 whatever has not streamed yet.
+
+## Accessibility
+
+- A visible focus ring is shown for keyboard users (`:focus-visible`).
+- Live progress bars are exposed as ARIA `progressbar`s with current values.
+- Loaders and error banners use `role="status"` / `role="alert"` so screen
+  readers announce state changes.
+- Skeleton shimmer animations respect `prefers-reduced-motion`.
 
 ## License
 
