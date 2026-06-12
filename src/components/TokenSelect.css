@@ -1,0 +1,15 @@
+.token-select {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  background: var(--color-surface-2);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.token-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
