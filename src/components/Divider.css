@@ -1,0 +1,37 @@
+.divider {
+  border: none;
+  border-top: 1px solid var(--color-border);
+}
+
+.divider--sm {
+  margin: 0.5rem 0;
+}
+
+.divider--md {
+  margin: 1rem 0;
+}
+
+.divider--lg {
+  margin: 1.75rem 0;
+}
+
+.divider--labeled {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-top: none;
+}
+
+.divider__line {
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.divider__label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-muted);
+  white-space: nowrap;
+}
