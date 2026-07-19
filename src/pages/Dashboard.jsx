@@ -33,28 +33,30 @@ function StreamSection({ title, direction }) {
   return (
     <section className="dashboard__section">
       <h2 className="dashboard__section-title">{title}</h2>
-      {loading && (
-        <div className="dashboard__grid">
-          <StreamCardSkeleton />
-          <StreamCardSkeleton />
-          <StreamCardSkeleton />
-        </div>
-      )}
-      {error && <ErrorMessage message={error} onRetry={refetch} />}
-      {!loading && !error && streams.length === 0 && (
-        <EmptyState
-          icon="🌊"
-          title="No streams yet"
-          description="When you create or receive a stream it will show up here."
-        />
-      )}
-      {!loading && !error && streams.length > 0 && (
-        <div className="dashboard__grid">
-          {streams.map((stream) => (
-            <StreamCard key={stream.id} stream={stream} />
-          ))}
-        </div>
-      )}
+      <div aria-live="polite" aria-atomic="true">
+        {loading && (
+          <div className="dashboard__grid">
+            <StreamCardSkeleton />
+            <StreamCardSkeleton />
+            <StreamCardSkeleton />
+          </div>
+        )}
+        {error && <ErrorMessage message={error} onRetry={refetch} />}
+        {!loading && !error && streams.length === 0 && (
+          <EmptyState
+            icon="🌊"
+            title="No streams yet"
+            description="When you create or receive a stream it will show up here."
+          />
+        )}
+        {!loading && !error && streams.length > 0 && (
+          <div className="dashboard__grid">
+            {streams.map((stream) => (
+              <StreamCard key={stream.id} stream={stream} />
+            ))}
+          </div>
+        )}
+      </div>
     </section>
   );
 }

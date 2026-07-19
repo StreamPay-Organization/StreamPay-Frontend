@@ -195,7 +195,11 @@ export default function CreateStream() {
           </strong>
         </div>
 
-        {submitError && <ErrorMessage message={submitError} />}
+        {submitError && (
+          <div aria-live="assertive" aria-atomic="true">
+            <ErrorMessage message={submitError} />
+          </div>
+        )}
 
         <Button type="submit" loading={submitting} disabled={touched && !isValid}>
           Start streaming

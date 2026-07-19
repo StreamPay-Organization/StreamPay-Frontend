@@ -82,6 +82,12 @@ whatever has not streamed yet.
 - Live progress bars are exposed as ARIA `progressbar`s with current values.
 - Loaders and error banners use `role="status"` / `role="alert"` so screen
   readers announce state changes.
+- Dashboard stream sections use `aria-live="polite"` to announce loading,
+  empty, and content updates without interrupting the user.
+- Form submission errors in CreateStream use `aria-live="assertive"` so
+  validation and submission failures are announced immediately.
+- Stream detail action errors (withdraw/cancel) use `aria-live="assertive"`
+  so failures are surfaced to assistive technology as soon as they occur.
 - Skeleton shimmer animations respect `prefers-reduced-motion`.
 
 ## License
