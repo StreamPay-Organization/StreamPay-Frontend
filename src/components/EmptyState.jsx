@@ -13,7 +13,7 @@ export default function EmptyState({
 }) {
   return (
     <div className="empty-state">
-      <div className="empty-state__icon" aria-hidden="true">
+      <div className="empty-state__icon" role="img" aria-label="Empty state icon">
         {icon}
       </div>
       <h3 className="empty-state__title">{title}</h3>

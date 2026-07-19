@@ -8,7 +8,7 @@ import Button from './Button.jsx';
 export default function ErrorMessage({ message = 'Something went wrong', onRetry }) {
   return (
     <div className="error-message" role="alert">
-      <span className="error-message__icon" aria-hidden="true">
+      <span className="error-message__icon" role="img" aria-label="Error icon">
         ⚠️
       </span>
       <span className="error-message__text">{message}</span>

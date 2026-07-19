@@ -14,7 +14,7 @@ export default function WalletButton() {
     return (
       <div className="wallet-button">
         <span className="wallet-button__addr" title={account.address}>
-          <span className="wallet-button__dot" aria-hidden="true" />
+          <span className="wallet-button__dot" role="img" aria-label="Connected status" />
           {shortAddress(account.address)}
         </span>
         <Button variant="ghost" onClick={disconnect}>

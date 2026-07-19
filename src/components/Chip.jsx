@@ -18,7 +18,7 @@ export default function Chip({ children, selected = false, onClick, icon }) {
       aria-pressed={selected}
     >
       {icon && (
-        <span className="chip__icon" aria-hidden="true">
+        <span className="chip__icon" role="img" aria-label="Chip icon">
           {icon}
         </span>
       )}

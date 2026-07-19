@@ -10,7 +10,7 @@ export default function StatCard({ label, value, hint, icon }) {
     <div className="stat-card">
       <div className="stat-card__top">
         {icon && (
-          <span className="stat-card__icon" aria-hidden="true">
+          <span className="stat-card__icon" role="img" aria-label="Stat icon">
             {icon}
           </span>
         )}

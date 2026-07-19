@@ -92,7 +92,7 @@ export default function StreamDetail() {
       <div className="page-header stream-detail__header">
         <div>
           <h1 className="page-header__title">
-            {token?.icon} {stream.label}
+            <span role="img" aria-label={`${stream.token} icon`}>{token?.icon}</span> {stream.label}
           </h1>
           <p className="page-header__subtitle">
             {isSender ? 'Outgoing' : 'Incoming'} ·{' '}
