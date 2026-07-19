@@ -16,8 +16,11 @@ import './App.css';
 export default function App() {
   return (
     <AppProvider>
+      <a href="#main-content" className="skip-link">
+        Skip to content
+      </a>
       <Navbar />
-      <main className="app-main">
+      <main id="main-content" className="app-main" tabIndex="-1">
         <ErrorBoundary>
           <Routes>
             <Route path="/" element={<Home />} />
