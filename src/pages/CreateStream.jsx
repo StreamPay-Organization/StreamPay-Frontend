@@ -9,6 +9,7 @@ import { createStream } from '../services/streams.js';
 import { useWallet } from '../hooks/useWallet.js';
 import { useLocalStorage } from '../hooks/useLocalStorage.js';
 import TokenSelect from '../components/TokenSelect.jsx';
+import FormField from '../components/FormField.js';
 import Button from '../components/Button.jsx';
 import ErrorMessage from '../components/ErrorMessage.jsx';
 import EmptyState from '../components/EmptyState.jsx';
@@ -115,8 +116,11 @@ export default function CreateStream() {
       </div>
 
       <form className="create-stream__form" onSubmit={handleSubmit} noValidate>
-        <label className="field">
-          <span className="field__label">Recipient address</span>
+        <FormField
+          id="recipient"
+          label="Recipient address"
+          error={touched && errors.recipient ? errors.recipient : null}
+        >
           <input
             className="field__input"
             type="text"
@@ -124,21 +128,17 @@ export default function CreateStream() {
             value={form.recipient}
             onChange={(e) => update('recipient', e.target.value)}
           />
-          {touched && errors.recipient && (
-            <span className="field__error">{errors.recipient}</span>
-          )}
-        </label>
+        </FormField>
 
-        <label className="field">
-          <span className="field__label">Token</span>
-          <TokenSelect
-            value={token}
-            onChange={setToken}
-          />
-        </label>
+        <FormField id="token" label="Token">
+          <TokenSelect value={token} onChange={setToken} className="field__input" />
+        </FormField>
 
-        <label className="field">
-          <span className="field__label">Total amount</span>
+        <FormField
+          id="total"
+          label="Total amount"
+          error={touched && errors.amount ? errors.amount : null}
+        >
           <input
             className="field__input"
             type="number"
@@ -148,13 +148,9 @@ export default function CreateStream() {
             value={form.total}
             onChange={(e) => update('total', e.target.value)}
           />
-          {touched && errors.amount && (
-            <span className="field__error">{errors.amount}</span>
-          )}
-        </label>
+        </FormField>
 
-        <label className="field">
-          <span className="field__label">Label (optional)</span>
+        <FormField id="label" label="Label (optional)">
           <input
             className="field__input"
             type="text"
@@ -162,27 +158,25 @@ export default function CreateStream() {
             value={form.label}
             onChange={(e) => update('label', e.target.value)}
           />
-        </label>
+        </FormField>
 
         <div className="create-stream__row">
-          <label className="field">
-            <span className="field__label">Start time</span>
+          <FormField id="start" label="Start time">
             <input
               className="field__input"
               type="datetime-local"
               value={form.startStr}
               onChange={(e) => update('startStr', e.target.value)}
             />
-          </label>
-          <label className="field">
-            <span className="field__label">End time</span>
+          </FormField>
+          <FormField id="end" label="End time">
             <input
               className="field__input"
               type="datetime-local"
               value={form.endStr}
               onChange={(e) => update('endStr', e.target.value)}
             />
-          </label>
+          </FormField>
         </div>
         {touched && errors.window && (
           <span className="field__error">{errors.window}</span>

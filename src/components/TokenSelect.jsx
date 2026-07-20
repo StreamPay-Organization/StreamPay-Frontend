@@ -3,13 +3,13 @@ import './TokenSelect.css';
 
 /**
  * Dropdown for picking a supported token.
- * @param {{value: string, onChange: Function, id?: string}} props
+ * @param {{value: string, onChange: Function, id?: string, className?: string}} props
  */
-export default function TokenSelect({ value, onChange, id = 'token' }) {
+export default function TokenSelect({ value, onChange, id = 'token', className = '' }) {
   return (
     <select
       id={id}
-      className="token-select"
+      className={['token-select', className].filter(Boolean).join(' ')}
       value={value}
       onChange={(e) => onChange(e.target.value)}
     >
