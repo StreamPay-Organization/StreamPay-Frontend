@@ -22,7 +22,7 @@ grants and subscriptions.
 - React 18
 - Vite 5
 - react-router-dom 6
-- Plain CSS (per-component stylesheets + global CSS variables)
+- Plain CSS (per-component stylesheets + shared design tokens)
 - Mock Stellar wallet / SDK (no network)
 
 ## Getting started
@@ -43,6 +43,7 @@ Copy `.env.example` to `.env` if you want to tweak the demo settings.
 | `npm run dev`     | Start the Vite dev server.   |
 | `npm run build`   | Build for production.        |
 | `npm run preview` | Preview the production build.|
+| `npm test`        | Run design-token regression tests. |
 
 ## Environment variables
 
@@ -67,7 +68,16 @@ src/
   hooks/        useWallet, useStreams, useNow, useLocalStorage
   utils/        format, validate, time, stream helpers
   constants/    token list
+  styles/       shared design tokens (`tokens.css`)
 ```
+
+## Design tokens
+
+App-wide colors, typography, radii, elevation and layout values are defined in
+`src/styles/tokens.css`. Components should use these semantic CSS custom
+properties (for example, `var(--color-primary)`) instead of duplicating shared
+visual values. The global stylesheet imports the token file before applying
+base styles.
 
 ## How streaming works
 

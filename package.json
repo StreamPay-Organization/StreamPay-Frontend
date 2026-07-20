@@ -5,10 +5,10 @@
   "type": "module",
   "description": "StreamPay - real-time payment streaming on Stellar/Soroban",
   "scripts": {
-    "dev": "vite",
     "build": "vite build",
+    "dev": "vite",
     "preview": "vite preview",
-    "test": "node --test test/a11y/aria-live.test.js"
+    "test": "node --test test/design-tokens.test.js"
   },
   "dependencies": {
     "react": "^18.2.0",
