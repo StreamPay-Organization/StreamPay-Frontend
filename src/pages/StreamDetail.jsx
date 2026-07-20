@@ -151,7 +151,9 @@ export default function StreamDetail() {
           </div>
         </dl>
 
-        {error && <ErrorMessage message={error} />}
+        <div aria-live="assertive" aria-atomic="true">
+          {error && <ErrorMessage message={error} />}
+        </div>
 
         <div className="stream-detail__actions">
           {!isSender && (
