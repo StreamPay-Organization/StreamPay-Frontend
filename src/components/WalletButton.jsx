@@ -1,5 +1,6 @@
 import { useWallet } from '../hooks/useWallet.js';
 import { shortAddress } from '../utils/format.js';
+import Avatar from './Avatar.jsx';
 import Button from './Button.jsx';
 import './WalletButton.css';
 
@@ -14,7 +15,8 @@ export default function WalletButton() {
     return (
       <div className="wallet-button">
         <span className="wallet-button__addr" title={account.address}>
-          <span className="wallet-button__dot" role="img" aria-label="Connected status" />
+          <span className="wallet-button__dot" aria-hidden="true" />
+          <Avatar seed={account.address} size={16} />
           {shortAddress(account.address)}
         </span>
         <Button variant="ghost" onClick={disconnect}>

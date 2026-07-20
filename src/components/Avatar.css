@@ -9,3 +9,8 @@
   flex-shrink: 0;
   user-select: none;
 }
+
+.avatar--identicon {
+  background: #ffffff;
+  overflow: hidden;
+}
