@@ -16,6 +16,7 @@ import {
   shortAddress,
 } from '../utils/format.js';
 import { msRemaining } from '../utils/time.js';
+import Avatar from '../components/Avatar.jsx';
 import StreamProgress from '../components/StreamProgress.jsx';
 import Badge, { statusTone, statusLabel } from '../components/Badge.jsx';
 import Button from '../components/Button.jsx';
@@ -109,11 +110,21 @@ export default function StreamDetail() {
         <dl className="stream-detail__grid">
           <div>
             <dt>From</dt>
-            <dd><code>{shortAddress(stream.sender)}</code></dd>
+            <dd>
+              <div className="stream-detail__address-wrapper">
+                <Avatar seed={stream.sender} size={16} />
+                <code>{shortAddress(stream.sender)}</code>
+              </div>
+            </dd>
           </div>
           <div>
             <dt>To</dt>
-            <dd><code>{shortAddress(stream.recipient)}</code></dd>
+            <dd>
+              <div className="stream-detail__address-wrapper">
+                <Avatar seed={stream.recipient} size={16} />
+                <code>{shortAddress(stream.recipient)}</code>
+              </div>
+            </dd>
           </div>
           <div>
             <dt>Total</dt>
