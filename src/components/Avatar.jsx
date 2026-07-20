@@ -31,7 +31,7 @@ export default function Avatar({ seed = '', size = 32 }) {
     fontSize: size * 0.45,
   };
   return (
-    <span className="avatar" style={style} aria-hidden="true">
+    <span className="avatar" style={style} role="img" aria-label="Avatar">
       {initial}
     </span>
   );

@@ -19,7 +19,7 @@ export default function StreamCard({ stream }) {
     <Link to={`/streams/${stream.id}`} className="stream-card">
       <div className="stream-card__head">
         <span className="stream-card__token">
-          {token?.icon} {stream.token}
+          <span role="img" aria-label={`${stream.token} icon`}>{token?.icon}</span> {stream.token}
         </span>
         <Badge tone={statusTone(stream.status)}>
           {statusLabel(stream.status)}

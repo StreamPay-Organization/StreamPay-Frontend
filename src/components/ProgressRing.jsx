@@ -35,7 +35,7 @@ export default function ProgressRing({
       aria-valuenow={percent}
       style={{ width: size, height: size }}
     >
-      <svg width={size} height={size}>
+      <svg width={size} height={size} role="img" aria-label="Progress ring">
         <circle
           className="progress-ring__track"
           cx={size / 2}

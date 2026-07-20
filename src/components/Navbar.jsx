@@ -10,7 +10,7 @@ export default function Navbar() {
     <header className="navbar">
       <div className="navbar__inner">
         <Link to="/" className="navbar__brand">
-          <span className="navbar__logo" aria-hidden="true">
+          <span className="navbar__logo" role="img" aria-label="StreamPay logo">
             💧
           </span>
           StreamPay

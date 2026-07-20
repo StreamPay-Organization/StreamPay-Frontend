@@ -20,7 +20,7 @@ export default function Alert({ tone = 'info', title, children, onDismiss }) {
   const assertive = tone === 'danger' || tone === 'warning';
   return (
     <div className={`alert alert--${tone}`} role={assertive ? 'alert' : 'status'}>
-      <span className="alert__icon" aria-hidden="true">
+      <span className="alert__icon" role="img" aria-label={`${tone} icon`}>
         {ICONS[tone] || ICONS.info}
       </span>
       <div className="alert__body">
