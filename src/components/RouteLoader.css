@@ -1,0 +1,47 @@
+.route-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 9999;
+  background-color: var(--color-border);
+  overflow: hidden;
+}
+
+.route-loader__bar {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--color-primary),
+    var(--color-accent, var(--color-primary))
+  );
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 10px var(--color-primary);
+  animation: route-loader-shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes route-loader-shimmer {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Ensure the loader is above the navbar */
+.route-loader {
+  pointer-events: none;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .route-loader__bar {
+    transition: none;
+    animation: none;
+  }
+}
