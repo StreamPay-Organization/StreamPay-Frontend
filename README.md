@@ -16,6 +16,8 @@ grants and subscriptions.
 - **Stream Detail** — progress, withdraw (claim streamed-so-far) and cancel
   (sender reclaims the remainder).
 - **Mock wallet** — connect / disconnect with persisted session.
+- **Route transitions** — global loading indicator at the top of the screen
+  during navigation between pages.
 
 ## Tech stack
 
@@ -99,6 +101,8 @@ whatever has not streamed yet.
 - Stream detail action errors (withdraw/cancel) use `aria-live="assertive"`
   so failures are surfaced to assistive technology as soon as they occur.
 - Skeleton shimmer animations respect `prefers-reduced-motion`.
+- Route loading indicator uses `role="progressbar"` with appropriate ARIA
+  attributes and respects `prefers-reduced-motion` preferences.
 
 ## License
 

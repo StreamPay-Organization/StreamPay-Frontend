@@ -8,6 +8,12 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- Global route transition loading indicator with progress bar at the top of the screen.
+- `RouteLoader` component that displays during navigation between pages.
+- `useRouteTransition` hook for tracking route transition state.
+- Accessibility support for route loading indicator with ARIA progressbar attributes.
+- Reduced motion support for route loading animations.
+- Automated tests for RouteLoader component and useRouteTransition hook.
 - Hooks: `useToggle`, `useInterval`, `usePrevious`, `useOnClickOutside`,
   `useKeyPress`, `useWindowSize` for common UI and lifecycle needs.
 - Components: `Tooltip`, `CopyButton`, `Tag`, `Avatar`, `Alert`, `Spinner` and

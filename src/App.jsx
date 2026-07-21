@@ -3,6 +3,7 @@ import { AppProvider } from './context/AppContext.jsx';
 import Navbar from './components/Navbar.jsx';
 import Footer from './components/Footer.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
+import RouteLoader from './components/RouteLoader.jsx';
 import Home from './pages/Home.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import CreateStream from './pages/CreateStream.jsx';
@@ -16,6 +17,7 @@ import './App.css';
 export default function App() {
   return (
     <AppProvider>
+      <RouteLoader />
       <a href="#main-content" className="skip-link">
         Skip to content
       </a>
