@@ -8,14 +8,39 @@ const DEFAULT_LATENCY = 600;
 
 /**
  * Resolve a value after a simulated network delay.
+ * If `signal` is provided and already aborted, rejects immediately with an
+ * AbortError.  If the signal fires during the delay, the promise rejects and
+ * the pending timeout is cleared to avoid memory leaks.
+ *
  * @template T
  * @param {T} value
  * @param {number} [latency] - delay in ms
+ * @param {AbortSignal} [signal] - optional cancellation signal
  * @returns {Promise<T>}
  */
-export function withLatency(value, latency = DEFAULT_LATENCY) {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(value), latency);
+export function withLatency(value, latency = DEFAULT_LATENCY, signal) {
+  if (signal?.aborted) {
+    return Promise.reject(new DOMException('Aborted', 'AbortError'));
+  }
+  return new Promise((resolve, reject) => {
+    const id = setTimeout(() => {
+      if (signal?.aborted) {
+        reject(new DOMException('Aborted', 'AbortError'));
+      } else {
+        resolve(value);
+      }
+    }, latency);
+
+    if (signal) {
+      signal.addEventListener(
+        'abort',
+        () => {
+          clearTimeout(id);
+          reject(new DOMException('Aborted', 'AbortError'));
+        },
+        { once: true }
+      );
+    }
   });
 }
 

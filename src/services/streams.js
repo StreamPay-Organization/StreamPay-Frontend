@@ -1,5 +1,6 @@
 import { withLatency } from './api.js';
 import { DAY, HOUR, elapsedFraction } from '../utils/time.js';
+import { appendEvent } from './streamHistory.js';
 
 /**
  * Mock stream store. Keeps an in-memory list of payment streams and exposes
@@ -71,6 +72,56 @@ export function currentAddress() {
   return ME;
 }
 
+// Emit seed events so the history table has data out of the box.
+(function seedEvents() {
+  const now = Date.now();
+  for (const s of streams) {
+    appendEvent({
+      streamId: s.id,
+      type: 'created',
+      timestamp: s.start,
+      actor: s.sender,
+      token: s.token,
+      direction: s.sender === ME ? 'outgoing' : 'incoming',
+      status: s.status,
+    });
+    if (s.withdrawn > 0) {
+      appendEvent({
+        streamId: s.id,
+        type: 'withdrawn',
+        timestamp: s.start + Math.floor((s.end - s.start) * 0.3),
+        amount: s.withdrawn,
+        actor: s.recipient,
+        token: s.token,
+        direction: s.sender === ME ? 'outgoing' : 'incoming',
+        status: s.status,
+      });
+    }
+    if (s.status === 'completed') {
+      appendEvent({
+        streamId: s.id,
+        type: 'completed',
+        timestamp: s.end,
+        actor: s.sender,
+        token: s.token,
+        direction: s.sender === ME ? 'outgoing' : 'incoming',
+        status: s.status,
+      });
+    }
+    if (s.status === 'cancelled') {
+      appendEvent({
+        streamId: s.id,
+        type: 'cancelled',
+        timestamp: now,
+        actor: s.sender,
+        token: s.token,
+        direction: s.sender === ME ? 'outgoing' : 'incoming',
+        status: s.status,
+      });
+    }
+  }
+})();
+
 /**
  * Compute how much has streamed so far for a given stream at `now`.
  * @param {object} stream
@@ -126,6 +177,15 @@ export async function createStream(input) {
     label: input.label || 'New stream',
   };
   streams = [stream, ...streams];
+  appendEvent({
+    streamId: stream.id,
+    type: 'created',
+    timestamp: Date.now(),
+    actor: ME,
+    token: stream.token,
+    direction: 'outgoing',
+    status: stream.status,
+  });
   return withLatency(stream, 700);
 }
 
@@ -139,6 +199,16 @@ export async function withdrawStream(id) {
   if (!stream) throw new Error('Stream not found');
   const available = streamedSoFar(stream) - stream.withdrawn;
   stream.withdrawn += Math.max(0, available);
+  appendEvent({
+    streamId: stream.id,
+    type: 'withdrawn',
+    timestamp: Date.now(),
+    amount: Math.max(0, available),
+    actor: stream.recipient,
+    token: stream.token,
+    direction: stream.sender === ME ? 'outgoing' : 'incoming',
+    status: stream.status,
+  });
   return withLatency({ ...stream, claimed: available }, 700);
 }
 
@@ -152,5 +222,14 @@ export async function cancelStream(id) {
   if (!stream) throw new Error('Stream not found');
   stream.status = 'cancelled';
   stream.end = Date.now();
+  appendEvent({
+    streamId: stream.id,
+    type: 'cancelled',
+    timestamp: Date.now(),
+    actor: stream.sender,
+    token: stream.token,
+    direction: stream.sender === ME ? 'outgoing' : 'incoming',
+    status: stream.status,
+  });
   return withLatency({ ...stream }, 700);
 }

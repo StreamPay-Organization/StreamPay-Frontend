@@ -1,0 +1,189 @@
+/* StreamHistoryTable.css — stream history table with filters and pagination */
+
+.sht {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 1.25rem);
+}
+
+/* ── Filters ──────────────────────────────────────────────────────────────── */
+
+.sht__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2, 0.75rem);
+  align-items: flex-end;
+}
+
+.sht__filter-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted, #8892a4);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sht__select {
+  background: var(--color-surface, #141927);
+  color: var(--color-text, #e2e8f0);
+  border: 1px solid var(--color-border, #2a3450);
+  border-radius: var(--radius, 12px);
+  padding: 0.4rem 0.75rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  min-width: 140px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.sht__select:focus-visible {
+  border-color: var(--color-primary, #5b8cff);
+  box-shadow: 0 0 0 2px rgba(91, 140, 255, 0.3);
+}
+
+/* ── Body ─────────────────────────────────────────────────────────────────── */
+
+.sht__body {
+  min-height: 6rem;
+}
+
+/* ── Table ────────────────────────────────────────────────────────────────── */
+
+.sht__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  color: var(--color-text, #e2e8f0);
+}
+
+.sht__table th {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted, #8892a4);
+  border-bottom: 1px solid var(--color-border, #2a3450);
+}
+
+.sht__row {
+  transition: background 0.1s ease;
+}
+
+.sht__row:hover {
+  background: rgba(91, 140, 255, 0.05);
+}
+
+.sht__row td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--color-border-subtle, #1e2a42);
+  vertical-align: middle;
+}
+
+.sht__stream-id code {
+  font-size: 0.8rem;
+  color: var(--color-text-muted, #8892a4);
+}
+
+.sht__date {
+  white-space: nowrap;
+  color: var(--color-text-muted, #8892a4);
+  font-size: 0.8rem;
+}
+
+/* ── Direction cell ───────────────────────────────────────────────────────── */
+
+.sht__dir {
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.sht__dir--incoming {
+  color: var(--color-success, #36d399);
+}
+
+.sht__dir--outgoing {
+  color: var(--color-primary, #5b8cff);
+}
+
+/* ── Event badge ──────────────────────────────────────────────────────────── */
+
+.sht-badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sht-badge--created {
+  background: rgba(91, 140, 255, 0.15);
+  color: var(--color-primary, #5b8cff);
+}
+
+.sht-badge--withdrawn {
+  background: rgba(54, 211, 153, 0.15);
+  color: var(--color-success, #36d399);
+}
+
+.sht-badge--cancelled {
+  background: rgba(255, 107, 107, 0.15);
+  color: var(--color-danger, #ff6b6b);
+}
+
+.sht-badge--completed {
+  background: rgba(250, 204, 21, 0.15);
+  color: #facc15;
+}
+
+/* ── Pagination ───────────────────────────────────────────────────────────── */
+
+.sht__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2, 0.75rem);
+  padding-top: var(--space-2, 0.75rem);
+  border-top: 1px solid var(--color-border, #2a3450);
+}
+
+.sht__page-btn {
+  background: var(--color-surface, #141927);
+  color: var(--color-primary, #5b8cff);
+  border: 1px solid var(--color-border, #2a3450);
+  border-radius: var(--radius, 12px);
+  padding: 0.4rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  min-width: 90px;
+}
+
+.sht__page-btn:hover:not(:disabled) {
+  background: rgba(91, 140, 255, 0.1);
+  border-color: var(--color-primary, #5b8cff);
+}
+
+.sht__page-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(91, 140, 255, 0.4);
+}
+
+.sht__page-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.sht__page-info {
+  font-size: 0.8rem;
+  color: var(--color-text-muted, #8892a4);
+  text-align: center;
+  flex: 1;
+}
