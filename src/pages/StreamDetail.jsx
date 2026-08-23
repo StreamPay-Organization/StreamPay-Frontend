@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
   getStream,
@@ -22,6 +22,8 @@ import Badge, { statusTone, statusLabel } from '../components/Badge.jsx';
 import Button from '../components/Button.jsx';
 import Loader from '../components/Loader.jsx';
 import ErrorMessage from '../components/ErrorMessage.jsx';
+import ModalDialog from '../components/ModalDialog.jsx';
+import FormField from '../components/FormField.jsx';
 import './StreamDetail.css';
 
 export default function StreamDetail() {
@@ -29,7 +31,15 @@ export default function StreamDetail() {
   const [stream, setStream] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [outcomeMessage, setOutcomeMessage] = useState(null);
   const [action, setAction] = useState(null); // 'withdraw' | 'cancel'
+  const [confirmingAction, setConfirmingAction] = useState(null); // 'withdraw' | 'cancel' | null
+
+  const [withdrawAmount, setWithdrawAmount] = useState('');
+  const [withdrawFieldError, setWithdrawFieldError] = useState(null);
+
+  const withdrawBtnRef = useRef(null);
+  const cancelBtnRef = useRef(null);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -47,12 +57,45 @@ export default function StreamDetail() {
     load();
   }, [load]);
 
-  async function handleWithdraw() {
+  const token = getToken(stream?.token);
+  const { outgoing: isSender, claimable = 0, remaining = 0 } = stream
+    ? deriveStream(stream, currentAddress())
+    : {};
+  const active = stream?.status === 'active';
+
+  function openWithdrawModal() {
+    setError(null);
+    setOutcomeMessage(null);
+    setWithdrawAmount(claimable > 0 ? claimable.toFixed(4) : '0');
+    setWithdrawFieldError(null);
+    setConfirmingAction('withdraw');
+  }
+
+  function openCancelModal() {
+    setError(null);
+    setOutcomeMessage(null);
+    setConfirmingAction('cancel');
+  }
+
+  async function handleConfirmWithdraw(e) {
+    if (e) e.preventDefault();
+    const numAmount = Number(withdrawAmount);
+    if (isNaN(numAmount) || numAmount <= 0) {
+      setWithdrawFieldError('Please enter a valid withdrawal amount');
+      return;
+    }
+    if (numAmount > claimable + 0.0001) {
+      setWithdrawFieldError('Amount exceeds claimable balance');
+      return;
+    }
+
     setAction('withdraw');
     setError(null);
     try {
       const updated = await withdrawStream(id);
       setStream(updated);
+      setOutcomeMessage(`Successfully withdrew ${formatToken(claimable, stream.token, 4)}`);
+      setConfirmingAction(null);
     } catch (e) {
       setError(e.message || 'Withdraw failed');
     } finally {
@@ -60,12 +103,15 @@ export default function StreamDetail() {
     }
   }
 
-  async function handleCancel() {
+  async function handleConfirmCancel(e) {
+    if (e) e.preventDefault();
     setAction('cancel');
     setError(null);
     try {
       const updated = await cancelStream(id);
       setStream(updated);
+      setOutcomeMessage(`Stream cancelled successfully. Reclaimed ${formatToken(remaining, stream.token)}.`);
+      setConfirmingAction(null);
     } catch (e) {
       setError(e.message || 'Cancel failed');
     } finally {
@@ -76,13 +122,6 @@ export default function StreamDetail() {
   if (loading) return <Loader label="Loading stream…" />;
   if (error && !stream) return <ErrorMessage message={error} onRetry={load} />;
   if (!stream) return null;
-
-  const token = getToken(stream.token);
-  const { outgoing: isSender, claimable, remaining } = deriveStream(
-    stream,
-    currentAddress()
-  );
-  const active = stream.status === 'active';
 
   return (
     <div className="stream-detail">
@@ -162,6 +201,14 @@ export default function StreamDetail() {
           </div>
         </dl>
 
+        <div role="status" aria-live="polite" aria-atomic="true">
+          {outcomeMessage && (
+            <div className="stream-detail__status-banner" data-testid="outcome-message">
+              {outcomeMessage}
+            </div>
+          )}
+        </div>
+
         <div aria-live="assertive" aria-atomic="true">
           {error && <ErrorMessage message={error} />}
         </div>
@@ -169,25 +216,120 @@ export default function StreamDetail() {
         <div className="stream-detail__actions">
           {!isSender && (
             <Button
-              onClick={handleWithdraw}
+              ref={withdrawBtnRef}
+              onClick={openWithdrawModal}
               loading={action === 'withdraw'}
               disabled={!active || claimable <= 0}
+              aria-haspopup="dialog"
+              aria-expanded={confirmingAction === 'withdraw'}
             >
               Withdraw {formatToken(claimable, stream.token, 4)}
             </Button>
           )}
           {isSender && (
             <Button
+              ref={cancelBtnRef}
               variant="danger"
-              onClick={handleCancel}
+              onClick={openCancelModal}
               loading={action === 'cancel'}
               disabled={!active}
+              aria-haspopup="dialog"
+              aria-expanded={confirmingAction === 'cancel'}
             >
               Cancel &amp; reclaim {formatToken(remaining, stream.token)}
             </Button>
           )}
         </div>
       </div>
+
+      {/* Withdraw Confirmation Dialog */}
+      <ModalDialog
+        isOpen={confirmingAction === 'withdraw'}
+        onClose={() => setConfirmingAction(null)}
+        title="Confirm Withdrawal"
+        titleId="withdraw-dialog-title"
+        description={`Confirm withdrawing claimable funds from stream "${stream.label}" to your wallet.`}
+        descriptionId="withdraw-dialog-desc"
+        triggerRef={withdrawBtnRef}
+        role="dialog"
+      >
+        <form onSubmit={handleConfirmWithdraw} noValidate>
+          <FormField
+            id="withdraw-amount-input"
+            label={`Withdrawal amount (${stream.token})`}
+            error={withdrawFieldError}
+          >
+            <input
+              id="withdraw-amount-input"
+              type="number"
+              min="0"
+              max={claimable}
+              step="any"
+              className="field__input"
+              value={withdrawAmount}
+              onChange={(e) => {
+                setWithdrawAmount(e.target.value);
+                setWithdrawFieldError(null);
+              }}
+              aria-invalid={!!withdrawFieldError}
+              aria-errormessage={withdrawFieldError ? 'withdraw-amount-input-error' : undefined}
+              aria-describedby="withdraw-dialog-desc"
+            />
+          </FormField>
+
+          <div className="modal-dialog__actions">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setConfirmingAction(null)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="primary"
+              loading={action === 'withdraw'}
+            >
+              Confirm Withdrawal
+            </Button>
+          </div>
+        </form>
+      </ModalDialog>
+
+      {/* Cancel Confirmation Dialog */}
+      <ModalDialog
+        isOpen={confirmingAction === 'cancel'}
+        onClose={() => setConfirmingAction(null)}
+        title="Cancel Stream & Reclaim Funds"
+        titleId="cancel-dialog-title"
+        description={`Are you sure you want to cancel stream "${stream.label}"? This will stop future streaming and reclaim ${formatToken(remaining, stream.token)} to your wallet.`}
+        descriptionId="cancel-dialog-desc"
+        triggerRef={cancelBtnRef}
+        role="alertdialog"
+      >
+        <form onSubmit={handleConfirmCancel}>
+          <p className="stream-detail__modal-warning">
+            This is a permanent action and cannot be undone.
+          </p>
+
+          <div className="modal-dialog__actions">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setConfirmingAction(null)}
+            >
+              Keep Stream Active
+            </Button>
+            <Button
+              type="submit"
+              variant="danger"
+              loading={action === 'cancel'}
+            >
+              Yes, Cancel Stream
+            </Button>
+          </div>
+        </form>
+      </ModalDialog>
     </div>
   );
 }
