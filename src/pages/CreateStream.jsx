@@ -6,6 +6,7 @@ import { formatToken } from '../utils/format.js';
 import { ratePerDay } from '../utils/stream.js';
 import { DAY } from '../utils/time.js';
 import { createStream } from '../services/streams.js';
+import { normalizeError } from '../services/api.js';
 import { useWallet } from '../hooks/useWallet.js';
 import { useLocalStorage } from '../hooks/useLocalStorage.js';
 import TokenSelect from '../components/TokenSelect.jsx';
@@ -89,7 +90,7 @@ export default function CreateStream() {
       });
       navigate(`/streams/${created.id}`);
     } catch (err) {
-      setSubmitError(err.message || 'Failed to create stream');
+      setSubmitError(normalizeError(err));
     } finally {
       setSubmitting(false);
     }
@@ -191,7 +192,7 @@ export default function CreateStream() {
 
         {submitError && (
           <div aria-live="assertive" aria-atomic="true">
-            <ErrorMessage message={submitError} />
+            <ErrorMessage message={submitError.message} onRetry={submitError.retryable ? () => handleSubmit(new Event('submit')) : undefined} />
           </div>
         )}
 

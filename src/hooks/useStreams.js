@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { listStreams } from '../services/streams.js';
+import { normalizeError } from '../services/api.js';
 
 /**
  * Load and expose the list of streams for a given direction.
@@ -18,7 +19,7 @@ export function useStreams(direction) {
     setError(null);
     return listStreams({ direction })
       .then((data) => setStreams(data))
-      .catch((e) => setError(e.message || 'Failed to load streams'))
+      .catch((e) => setError(normalizeError(e)))
       .finally(() => setLoading(false));
   }, [direction]);
 

@@ -6,6 +6,7 @@ import {
   cancelStream,
   currentAddress,
 } from '../services/streams.js';
+import { normalizeError } from '../services/api.js';
 import { deriveStream } from '../utils/stream.js';
 import { getToken } from '../constants/tokens.js';
 import {
@@ -36,10 +37,10 @@ export default function StreamDetail() {
     setError(null);
     return getStream(id)
       .then((data) => {
-        if (!data) setError('Stream not found');
+        if (!data) setError(normalizeError({ status: 404, message: 'Stream not found' }));
         setStream(data);
       })
-      .catch((e) => setError(e.message || 'Failed to load stream'))
+      .catch((e) => setError(normalizeError(e)))
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -54,7 +55,7 @@ export default function StreamDetail() {
       const updated = await withdrawStream(id);
       setStream(updated);
     } catch (e) {
-      setError(e.message || 'Withdraw failed');
+      setError(normalizeError(e));
     } finally {
       setAction(null);
     }
@@ -67,14 +68,14 @@ export default function StreamDetail() {
       const updated = await cancelStream(id);
       setStream(updated);
     } catch (e) {
-      setError(e.message || 'Cancel failed');
+      setError(normalizeError(e));
     } finally {
       setAction(null);
     }
   }
 
   if (loading) return <Loader label="Loading stream…" />;
-  if (error && !stream) return <ErrorMessage message={error} onRetry={load} />;
+  if (error && !stream) return <ErrorMessage message={error.message} onRetry={error.retryable ? load : undefined} />;
   if (!stream) return null;
 
   const token = getToken(stream.token);
@@ -163,7 +164,7 @@ export default function StreamDetail() {
         </dl>
 
         <div aria-live="assertive" aria-atomic="true">
-          {error && <ErrorMessage message={error} />}
+          {error && <ErrorMessage message={error.message} onRetry={error.retryable ? load : undefined} />}
         </div>
 
         <div className="stream-detail__actions">

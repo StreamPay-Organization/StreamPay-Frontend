@@ -1,4 +1,4 @@
-import { withLatency } from './api.js';
+import { normalizeError, withLatency } from './api.js';
 import { DAY, HOUR, elapsedFraction } from '../utils/time.js';
 
 /**
@@ -113,20 +113,24 @@ export async function getStream(id) {
  * @returns {Promise<object>}
  */
 export async function createStream(input) {
-  const stream = {
-    id: `str-${nextId++}`,
-    sender: ME,
-    recipient: input.recipient.trim(),
-    token: input.token,
-    total: Number(input.total),
-    withdrawn: 0,
-    start: input.start,
-    end: input.end,
-    status: 'active',
-    label: input.label || 'New stream',
-  };
-  streams = [stream, ...streams];
-  return withLatency(stream, 700);
+  try {
+    const stream = {
+      id: `str-${nextId++}`,
+      sender: ME,
+      recipient: input.recipient.trim(),
+      token: input.token,
+      total: Number(input.total),
+      withdrawn: 0,
+      start: input.start,
+      end: input.end,
+      status: 'active',
+      label: input.label || 'New stream',
+    };
+    streams = [stream, ...streams];
+    return withLatency(stream, 700);
+  } catch (error) {
+    throw normalizeError(error);
+  }
 }
 
 /**
@@ -135,11 +139,15 @@ export async function createStream(input) {
  * @returns {Promise<object>}
  */
 export async function withdrawStream(id) {
-  const stream = streams.find((s) => s.id === id);
-  if (!stream) throw new Error('Stream not found');
-  const available = streamedSoFar(stream) - stream.withdrawn;
-  stream.withdrawn += Math.max(0, available);
-  return withLatency({ ...stream, claimed: available }, 700);
+  try {
+    const stream = streams.find((s) => s.id === id);
+    if (!stream) throw normalizeError({ status: 404, message: 'Stream not found' });
+    const available = streamedSoFar(stream) - stream.withdrawn;
+    stream.withdrawn += Math.max(0, available);
+    return withLatency({ ...stream, claimed: available }, 700);
+  } catch (error) {
+    throw normalizeError(error);
+  }
 }
 
 /**
@@ -148,9 +156,13 @@ export async function withdrawStream(id) {
  * @returns {Promise<object>}
  */
 export async function cancelStream(id) {
-  const stream = streams.find((s) => s.id === id);
-  if (!stream) throw new Error('Stream not found');
-  stream.status = 'cancelled';
-  stream.end = Date.now();
-  return withLatency({ ...stream }, 700);
+  try {
+    const stream = streams.find((s) => s.id === id);
+    if (!stream) throw normalizeError({ status: 404, message: 'Stream not found' });
+    stream.status = 'cancelled';
+    stream.end = Date.now();
+    return withLatency({ ...stream }, 700);
+  } catch (error) {
+    throw normalizeError(error);
+  }
 }

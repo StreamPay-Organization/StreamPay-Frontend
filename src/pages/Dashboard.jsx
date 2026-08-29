@@ -41,7 +41,7 @@ function StreamSection({ title, direction }) {
             <StreamCardSkeleton />
           </div>
         )}
-        {error && <ErrorMessage message={error} onRetry={refetch} />}
+        {error && <ErrorMessage message={error.message} onRetry={error.retryable ? refetch : undefined} />}
         {!loading && !error && streams.length === 0 && (
           <EmptyState
             icon="🌊"
