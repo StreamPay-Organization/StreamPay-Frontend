@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useStreams } from '../hooks/useStreams.js';
 import { useWallet } from '../hooks/useWallet.js';
@@ -24,17 +25,71 @@ function StreamCardSkeleton() {
   );
 }
 
+const STATUS_OPTIONS = [
+  { value: '', label: 'All statuses' },
+  { value: 'active', label: 'Active' },
+  { value: 'completed', label: 'Completed' },
+  { value: 'canceled', label: 'Canceled' },
+];
+
 /**
- * Render a titled section of streams with loading/error/empty handling.
+ * Render a titled section of streams with filtering, pagination,
+ * and loading/error/empty handling.
  */
 function StreamSection({ title, direction }) {
-  const { streams, loading, error, refetch } = useStreams(direction);
+  const [token, setToken] = useState('');
+  const [status, setStatus] = useState('');
+
+  const filters = { direction };
+  if (token.trim()) filters.token = token.trim();
+  if (status) filters.status = status;
+
+  const {
+    streams,
+    loading,
+    loadingMore,
+    error,
+    hasMore,
+    loadMore,
+    refetch,
+  } = useStreams(filters);
+
+  const isInitialLoading = loading && streams.length === 0;
+  const showEmpty = !loading && !error && streams.length === 0;
 
   return (
     <section className="dashboard__section">
       <h2 className="dashboard__section-title">{title}</h2>
+
+      <div className="dashboard__filters">
+        <label className="dashboard__filter">
+          <span className="dashboard__filter-label">Token</span>
+          <input
+            type="text"
+            className="dashboard__filter-input"
+            placeholder="Filter by token"
+            value={token}
+            onChange={(event) => setToken(event.target.value)}
+          />
+        </label>
+        <label className="dashboard__filter">
+          <span className="dashboard__filter-label">Status</span>
+          <select
+            className="dashboard__filter-input"
+            value={status}
+            onChange={(event) => setStatus(event.target.value)}
+          >
+            {STATUS_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+
       <div aria-live="polite" aria-atomic="true">
-        {loading && (
+        {isInitialLoading && (
           <div className="dashboard__grid">
             <StreamCardSkeleton />
             <StreamCardSkeleton />
@@ -42,18 +97,30 @@ function StreamSection({ title, direction }) {
           </div>
         )}
         {error && <ErrorMessage message={error} onRetry={refetch} />}
-        {!loading && !error && streams.length === 0 && (
+        {showEmpty && (
           <EmptyState
             icon="🌊"
             title="No streams yet"
             description="When you create or receive a stream it will show up here."
           />
         )}
-        {!loading && !error && streams.length > 0 && (
+        {streams.length > 0 && (
           <div className="dashboard__grid">
             {streams.map((stream) => (
               <StreamCard key={stream.id} stream={stream} />
             ))}
+          </div>
+        )}
+        {loadingMore && (
+          <div className="dashboard__grid">
+            <StreamCardSkeleton />
+            <StreamCardSkeleton />
+            <StreamCardSkeleton />
+          </div>
+        )}
+        {!loading && !loadingMore && hasMore && (
+          <div className="dashboard__load-more">
+            <Button onClick={loadMore}>Load more</Button>
           </div>
         )}
       </div>
