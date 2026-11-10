@@ -5,8 +5,8 @@
   "type": "module",
   "description": "StreamPay - real-time payment streaming on Stellar/Soroban",
   "scripts": {
-    "build": "vite build",
-    "dev": "vite",
+    "build": "node init && vite build",
+    "dev": "node init && vite",
     "preview": "vite preview",
     "test": "node --test test/design-tokens.test.js test/RouteLoader.test.js test/a11y/aria-live.test.js test/a11y/keyboard-dialog.test.js"
   },
